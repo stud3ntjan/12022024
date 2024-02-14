@@ -8,7 +8,7 @@ AuthRouter.get("/login", (req, res) => {
 });
 
 AuthRouter.post("/signup", (req, res) => {
-  res.status(StatusCodes.OK).send("User Sign Up");
+  res.status(StatusCodes.CREATED).send("User Sign Up");
 });
 
 AuthRouter.delete("/logout", (req, res) => {
