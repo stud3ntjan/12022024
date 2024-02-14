@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const { ReasonPhrases, StatusCodes } = require("http-status-codes");
 
 // Zugriff auf Umgebungsvariablen
 const { PORT } = process.env;
@@ -27,6 +28,22 @@ const profiles = [
   },
 ];
 
+//  ***GET REQUESTS***
+// Get all Profiles
+app.get("/profiles", (req, res) => {
+  res.status(StatusCodes.OK).json({ profiles });
+});
+
+app.get("/profile", (req, res) => {
+  const userId = parseInt(req.query.userId);
+  if (!userId) {
+    res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+    return;
+  }
+  const userProfile = profiles.find((item) => item.id === userId);
+  res.status(StatusCodes.OK).json({ profile: userProfile });
+});
+
 // Beispieluser
 const userData = {
   firstName: "John",
@@ -45,9 +62,21 @@ const todosData = [
 app.get("/todo", (req, res) => {
   const todoId = parseInt(req.query.todoId);
 
+  // Hier solltest du überprüfen, ob die todoId gültig ist
+  if (!todoId || isNaN(todoId)) {
+    res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+    return;
+  }
+
   const todoItem = todosData.find((item) => item.id === todoId);
 
-  res.json({ todo: todoItem });
+  // Überprüfen, ob das ToDo-Element gefunden wurde
+  if (!todoItem) {
+    res.status(StatusCodes.NOT_FOUND).send(ReasonPhrases.NOT_FOUND);
+    return;
+  }
+
+  res.status(StatusCodes.OK).json({ todo: todoItem });
 });
 
 app.get("/todos", (req, res) => {
